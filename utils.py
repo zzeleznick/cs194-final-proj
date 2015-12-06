@@ -1,4 +1,6 @@
+# internals
 from classes import SubtitleClass
+from classes import WordTokenizer as wdtk
 
 INPUT_FOLDER = 'data/'
 OUTPUT_FOLDER = 'output/'
@@ -24,10 +26,16 @@ def parseSRT(fname):
     with open(OUTPUT_FOLDER + fname + '.txt', 'w') as outfile:
         for idx, line in enumerate(parsed):
             timestamp, text = line
+            translations = [ ['&#39;', "'"], # apostrophe
+                             ['&gt;', ">"], # greater than sign
+                            ]
+            for orginal, translated in translations:
+                text = text.replace(orginal, translated)  # translate junk
             dataDict[idx] = {"timestamp": timestamp, "text": text}
-            outfile.writelines(line)
+            outfile.writelines(timestamp+text)
     Subtitles = SubtitleClass(fname, dataDict)
     print(Subtitles)
+    print 'Total Number of words: %d | Uniques: %d' % (Subtitles.wordCount, Subtitles.uniqueWordCount() )
 
 if __name__ == '__main__':
     parseSRT('Intro')
