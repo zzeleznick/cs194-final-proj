@@ -1,0 +1,44 @@
+1
+0:00:00 --> 0:00:05
+Downloaded from ccSubs.com
+
+2
+00:00:00 --> 00:00:04
+&gt;&gt; Let&#39;s say you&#39;re a college freshman and you&#39;re choosing a major. You&#39;re
+
+3
+00:00:04 --> 00:00:08
+debating between Nursing and Geography. So, you decide that you&#39;re going to look
+
+4
+00:00:08 --> 00:00:12
+at how much Nursing majors make as opposed to Geography majors. Fortunately,
+
+5
+00:00:12 --> 00:00:16
+these days, data is often easily accessible. You find that the frequency
+
+6
+00:00:16 --> 00:00:21
+distributions of Nursing majors&#39; salaries and Geography majors&#39; salaries looks
+
+7
+00:00:21 --> 00:00:25
+like this. So, let&#39;s say that these histograms were created from the data from
+
+8
+00:00:25 --> 00:00:29
+everyone who either majored in Nursing or Geography, and the x-axis represents
+
+9
+00:00:29 --> 00:00:34
+their annual income in thousands. From these distributions, approximately what
+
+10
+00:00:34 --> 00:00:38
+income do most Nursing majors make, and approximately what income do most
+
+11
+00:00:38 --> 00:00:39
+Geography majors make?
+
