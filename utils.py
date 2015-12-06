@@ -26,6 +26,8 @@ def parseSRT(fname):
     with open(OUTPUT_FOLDER + fname + '.txt', 'w') as outfile:
         for idx, line in enumerate(parsed):
             timestamp, text = line
+            timestamp = timestamp.strip()
+            text = text.strip()
             translations = [ ['&#39;', "'"], # apostrophe
                              ['&gt;', ">"], # greater than sign
                             ]
@@ -34,11 +36,16 @@ def parseSRT(fname):
             dataDict[idx] = {"timestamp": timestamp, "text": text}
             outfile.writelines(timestamp+text)
     Subtitles = SubtitleClass(fname, dataDict)
+    '''
     print(Subtitles)
     print 'Total Number of words: %d | Uniques: %d' % (Subtitles.wordCount, Subtitles.uniqueWordCount() )
     fd = Subtitles.freqDist
     for word in fd.keys():
         print word, fd[word]
+    print Subtitles.words
+    print Subtitles.times
+    '''
+    return Subtitles
 
 if __name__ == '__main__':
     parseSRT('Intro')

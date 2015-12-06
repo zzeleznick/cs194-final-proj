@@ -1,38 +1,48 @@
-# ---------==== Step 1 ====----------
+from utils import parseSRT
 
-def load_video(fname):
+# ---------==== Step 1 ====---------- #
+
+def loadVideo(fname):
     """
     Probably an array of images + audio, right?
     We'll have to investigate.
     """
     return 0
 
-def load_subs(fname):
+def loadSubs(fname):
     """
-    Returns a long string, I'm thinking.
-    (maybe a buffer?)
+    Returns an instance of the Subtitle Class
     """
-    return 0
+    return parseSRT(fname)
 
-# ---------==== Step 2 ====----------
+# ---------==== Step 2 ====---------- #
 
-def word_occurrences(subs,word):
+def wordOccurrences(subs, word):
     """
-    SUBS is a string.
+    subs is a dictionary with keys of integers (0, N)
+    subs.data[0] --> {"timestamp": timestamp, "text": text}
+    subs.words[0] --> ['word1', 'word2']
+    subs.times[0] --> ['00:00:00 --> 00:00:04']
 
     Returns an array of tuples denoting
     the time-ranges when WORD occurs.
 
     We search for WORD:
-    - Not case-sensitive.
-    - Only the word (i.e. "african" should
-      not be found for the word "africa").
+    - Not Case-Sensitive.
+    - Only exact matches of the word
+      - (i.e. "african" should not be found for the word "africa").
 
     For example:
         [("00:01:05","00:01:11"),("00:01:28","00:01:37")]
     """
-    occurrences_list = [("00:01:05","00:01:11"),("00:01:28","00:01:37")]
-    return occurrences_list
+    # occurrences_list = [("00:01:05","00:01:11"),("00:01:28","00:01:37")]
+    segmentedWordList = subs.words
+    times = subs.times
+    occurrences = []
+    for idx, wordList in enumerate(segmentedWordList):
+        if word in wordList:
+            occurrences.append(times[idx])
+    return occurrences
 
 def sections_to_remove(word_occurrences):
     """
@@ -48,7 +58,7 @@ def sections_to_remove(word_occurrences):
     sections_to_remove = [("00:00:00","00:01:05")]
     return sections_to_remove
 
-# ---------==== Step 3 ====----------
+# ---------==== Step 3 ====---------- #
 
 def slice_video(video,sections_to_remove):
     """
@@ -64,7 +74,7 @@ def slice_video(video,sections_to_remove):
         # delete that particular time-range
         pass
 
-# ---------==== Step 4 ====----------
+# ---------==== Step 4 ====---------- #
 
 def save_video(fname):
     """
@@ -72,22 +82,30 @@ def save_video(fname):
     """
     pass
 
-# ---------=========----------
+# ---------===== MAIN ====---------- #
 
-video_name = "1"
-word = "africa"
+NAME = "Intro"
+WORD = "say"
 
 def main():
     # STEP 1: Load files
-    video = loadVideo(video_name+".jpg")
-    subs = load_subs(video_name+".srt")
+    video = loadVideo(NAME + '.mp4')
+    subs = loadSubs(NAME)
+
     # STEP 2: Process Subs Into Array
-    word_occurrences = word_occurrences(subs,word)
+    word_occurrences = wordOccurrences(subs, WORD)
     sections_to_remove = sections_to_remove(word_occurrences)
+
     # STEP 3: Slice the Video
     slice_video(video,sections_to_remove)
+
     # STEP 4: Save the Video that has been cut.
     save_video = save_video(video_name+"-cut.jpg")
 
+def test():
+    subs = loadSubs(NAME)
+    timestamps = wordOccurrences(subs, WORD)
+    print timestamps
+
 if __name__ == '__main__':
-    main()
+    test()

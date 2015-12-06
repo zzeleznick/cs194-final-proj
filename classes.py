@@ -22,23 +22,32 @@ class WordTokenizer:
 class SubtitleClass:
     """Class for handling srt files and returning a dictionary like object"""
     def __init__(self, name, dataDictionary):
-        def buildFreqDist(dataDict):
-            fullText = ''.join([entry['text'] for entry in dataDict.values()])
-            fullText = fullText.replace('\n', ' ')
-            words = WordTokenizer(fullText).tokenize()
+        def buildTimeSegments(dataDict):
+            times = [ entry['timestamp'].replace('\n', ' ') for entry in dataDict.values() ] # list of sentences
+            return times
+
+        def buildTimeSegmentedWordList(dataDict):
+            textList = [ entry['text'].replace('\n', ' ') for entry in dataDict.values() ] # list of sentences
+            words = [ WordTokenizer(text).tokenize() for text in textList ]
+            return words
+
+        def buildFreqDist(wordlistList):
             freqDist = {}
             totalWords = 0
-            for word in words:
-                totalWords += 1
-                if word not in freqDist:
-                    freqDist[word] = 1
-                else:
-                    freqDist[word] += 1
+            for lst in wordlistList:
+                for word in lst:
+                    totalWords += 1
+                    if word not in freqDist:
+                        freqDist[word] = 1
+                    else:
+                        freqDist[word] += 1
             return freqDist, totalWords
 
         self.name = name
         self.data = dataDictionary
-        self.freqDist, self.wordCount = buildFreqDist(dataDictionary)
+        self.times = buildTimeSegments(dataDictionary)
+        self.words = buildTimeSegmentedWordList(dataDictionary)
+        self.freqDist, self.wordCount = buildFreqDist(self.words)
         self.lineCount = len(self.data.keys())
 
     def uniqueWordCount(self):
