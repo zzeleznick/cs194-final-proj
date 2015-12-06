@@ -1,3 +1,5 @@
+import re
+
 # internals
 from classes import SubtitleClass
 from classes import WordTokenizer as wdtk
@@ -21,20 +23,38 @@ def parseSRT(fname):
     \n # blank
     '''
     # Starting with 0, want to collect lines 1,2 and then 5,6 since 3 is blank, 4 is #id which we discard
-    parsed = [ lines[i:i+2] for i in range(1, len(lines), 4) ]
+    # parsed = [ lines[i:i+2] for i in range(1, len(lines), 4) ]
+    # WARNING THE PRIOR LINE IS NOT DYNAMIC ENOUGH
+    lineStarters = []
+    pureNumbers = re.compile(r'^[0-9]*$')
+    for idx, line in enumerate(lines):
+        line = line.strip().replace('\n', '') # empty matches can occur
+        if line and pureNumbers.match(line):
+            lineStarters.append(idx)
+
+    parsed = []
+
+    for i in range(len(lineStarters)- 1):
+        stamp = lines[lineStarters[i]+1] # skip the index and take the timestamp
+        text = ''.join(lines[lineStarters[i]+2: lineStarters[i+1] - 1]) # skip the final blank
+        parsed.append([stamp, text])
+
+    lastStamp = lines[lineStarters[-1]+1] # skip the index and take the timestamp
+    lastText = ''.join(lines[lineStarters[-1]+2:]) # skip the final blank
+    parsed.append([lastStamp, lastText])
+
     dataDict = {}
     with open(OUTPUT_FOLDER + fname + '.txt', 'w') as outfile:
         for idx, line in enumerate(parsed):
             timestamp, text = line
             timestamp = timestamp.strip()
-            text = text.strip()
             translations = [ ['&#39;', "'"], # apostrophe
                              ['&gt;', ">"], # greater than sign
                             ]
             for orginal, translated in translations:
                 text = text.replace(orginal, translated)  # translate junk
             dataDict[idx] = {"timestamp": timestamp, "text": text}
-            outfile.writelines(timestamp+text)
+            outfile.writelines(timestamp+ '\n' + text + '\n')
     Subtitles = SubtitleClass(fname, dataDict)
     '''
     print(Subtitles)

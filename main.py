@@ -105,7 +105,15 @@ def main():
 def test():
     subs = loadSubs(NAME)
     timestamps = wordOccurrences(subs, WORD)
+    print subs
+    print timestamps
+
+def test2():
+    subs = loadSubs('Obama-African-Union')
+    timestamps = wordOccurrences(subs, 'Africa')
+    print subs
     print timestamps
 
 if __name__ == '__main__':
-    test()
+    # test()
+    test2()
