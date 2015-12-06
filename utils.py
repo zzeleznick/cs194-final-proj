@@ -36,6 +36,9 @@ def parseSRT(fname):
     Subtitles = SubtitleClass(fname, dataDict)
     print(Subtitles)
     print 'Total Number of words: %d | Uniques: %d' % (Subtitles.wordCount, Subtitles.uniqueWordCount() )
+    fd = Subtitles.freqDist
+    for word in fd.keys():
+        print word, fd[word]
 
 if __name__ == '__main__':
     parseSRT('Intro')

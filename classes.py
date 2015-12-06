@@ -22,14 +22,6 @@ class WordTokenizer:
 class SubtitleClass:
     """Class for handling srt files and returning a dictionary like object"""
     def __init__(self, name, dataDictionary):
-        '''
-        def getLineCount(dataDict):
-            return len(dataDict.keys())
-
-        def getWordCount(dataDict):
-            lines = [entry['text'] for entry in dataDict.values()]
-            return sum([len(line.strip().split()) for line in lines])
-        '''
         def buildFreqDist(dataDict):
             fullText = ''.join([entry['text'] for entry in dataDict.values()])
             fullText = fullText.replace('\n', ' ')
@@ -43,7 +35,6 @@ class SubtitleClass:
                 else:
                     freqDist[word] += 1
             return freqDist, totalWords
-
 
         self.name = name
         self.data = dataDictionary
