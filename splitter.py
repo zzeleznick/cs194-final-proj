@@ -8,7 +8,7 @@ import shlex
 from utils import INPUT_FOLDER, OUTPUT_FOLDER, LOG_FILE, zprint
 
 def main():
-    filename, split_length = parse_options()
+    filename, split_length, offset, limit = parse_options()
     name, ext = filename.rsplit(".", 1)
 
     path = OUTPUT_FOLDER + name + '-' + str(split_length) + '/'
@@ -42,16 +42,17 @@ def main():
         print("Can't determine video length.")
         raise SystemExit
 
-    split_count = int(math.ceil(float(video_length) / split_length))
+    split_count = int(math.ceil(float(video_length - offset) / split_length))
 
-    if split_count == 1:
-        print("Video length is less than the target split length.")
-        raise SystemExit
+    if limit:
+        print('Trimming %d potential clips to %d' % (split_count, limit))
+        split_count = min(split_count, limit)
 
     for n in range(split_count):
-        split_start = split_length * n
+        split_start = split_length * n + offset
+        timing = '%d-%d' % (split_start, min(split_start + split_length, video_length ))
         cmd = "ffmpeg -i {} -vcodec copy  -strict -2 -ss {} -t {} {}{}.{}".\
-            format(inputVideoPath, split_start, split_length, path, n, ext)
+            format(inputVideoPath, split_start, split_length, path, timing, ext)
         print("About to run: {}".format(cmd))
         check_call(shlex.split(cmd), universal_newlines=True)
 
@@ -73,14 +74,18 @@ def listOutputVideoFiles():
 def parse_options():
     parser = argparse.ArgumentParser(
         description="Splits a video into chunks of length L as specified by the user and saves them to output/name",
-        usage = "%(prog)s [-h] [-v] [Filename] [L]\n*Logs generated to log.txt * ",
+        usage = "%(prog)s [-h] [-v] [Filename] [length] [-o offset] [-l limit]\n*Logs generated to log.txt * ",
         formatter_class= argparse.RawDescriptionHelpFormatter,
         epilog= listVideoFiles() )
 
     parser.add_argument("filename",  metavar= 'v', nargs='?', default = None,
                         help='the video to split')
-    parser.add_argument("length",  metavar= 'l', nargs='?', default = 10,
+    parser.add_argument("length",  metavar= 'length', nargs='?', default = 10,
                         help='the length for each chunk')
+    parser.add_argument("-o", "--offset", type = int, required = False, default = 0,
+                        help='the seconds to offset the clip trimming')
+    parser.add_argument("-l", "--limit",  dest='limit', type = int, required = False,
+                        help='the max number of clips')
     parser.add_argument("-v", "--verbose", action="store_true",
                         required = False, default = False,
                         help='Displays all the output videos and exits if True')
@@ -89,6 +94,8 @@ def parse_options():
     print args
     video  = args.filename
     length = int(args.length)
+    offset = int(args.offset)
+    limit = args.limit
     if not video:
         print("ERROR: Did not input value for video name")
         print listVideoFiles()
@@ -105,7 +112,10 @@ def parse_options():
         print listOutputVideoFiles()
         exit()
 
-    return video, length
+    if limit:
+        limit = int(limit)
+
+    return video, length, offset, limit
 
 if __name__ == '__main__':
     main()
