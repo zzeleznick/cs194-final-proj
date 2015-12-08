@@ -40,8 +40,11 @@ def wordOccurrences(subs, word):
     times = subs.times
     occurrences = []
     for idx, wordList in enumerate(segmentedWordList):
+        # idx is index
         if word in wordList:
+            # Refine bounds for TIMES
             occurrences.append(times[idx])
+
     return occurrences
 
 def sections_to_remove(word_occurrences):

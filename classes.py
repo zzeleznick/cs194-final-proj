@@ -45,8 +45,8 @@ class SubtitleClass:
 
         self.name = name
         self.data = dataDictionary
-        self.times = buildTimeSegments(dataDictionary)
-        self.words = buildTimeSegmentedWordList(dataDictionary)
+        self.times = buildTimeSegments(dataDictionary) # array of strings
+        self.words = buildTimeSegmentedWordList(dataDictionary) # giant 2d array. Wordlist for each timestamp.
         self.freqDist, self.wordCount = buildFreqDist(self.words)
         self.lineCount = len(self.data.keys())
 
