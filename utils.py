@@ -1,11 +1,29 @@
 import re
-
+import sys
+import time
 # internals
 from classes import SubtitleClass
 from classes import WordTokenizer as wdtk
 
 INPUT_FOLDER = 'data/'
 OUTPUT_FOLDER = 'output/'
+
+LOG_FILE = 'log.txt'
+TIMESTAMP_SET = False
+
+def zprint(*stream):
+    '''
+    Prints messages to a log file as specified in LOG_FILE variable
+    '''
+    with open(LOG_FILE, 'a') as myLog:
+        global TIMESTAMP_SET
+        if not TIMESTAMP_SET:
+            myLog.writelines('\n' + str(sys.argv[0]) + ' run at ' + time.strftime("%Y-%m-%d %H:%M") + '\n')
+            TIMESTAMP_SET = True
+        for arg in stream:
+            myLog.writelines(str(arg) + ' ')  # safe cast to string and add trailing space
+        myLog.writelines('\n')  # end with newline
+
 
 def parseSRT(fname):
     lines = []
