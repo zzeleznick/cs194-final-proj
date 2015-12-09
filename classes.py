@@ -23,11 +23,12 @@ class SubtitleClass:
     """Class for handling srt files and returning a dictionary like object"""
     def __init__(self, name, dataDictionary):
         def buildTimeSegments(dataDict):
-            times = [ entry['timestamp'].replace('\n', ' ') for entry in dataDict.values() ] # list of sentences
+            # dataDict is generated in utils.py
+            times = [ entry['timestamp'].replace('\n', ' ') for entry in dataDict.values() ]
             return times
 
         def buildTimeSegmentedWordList(dataDict):
-            textList = [ entry['text'].replace('\n', ' ') for entry in dataDict.values() ] # list of sentences
+            textList = [ entry['text'].replace('\n', ' ') for entry in dataDict.values() ]
             words = [ WordTokenizer(text).tokenize() for text in textList ]
             return words
 

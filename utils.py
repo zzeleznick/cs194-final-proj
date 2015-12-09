@@ -69,8 +69,9 @@ def parseSRT(fname):
             translations = [ ['&#39;', "'"], # apostrophe
                              ['&gt;', ">"], # greater than sign
                             ]
-            for orginal, translated in translations:
-                text = text.replace(orginal, translated)  # translate junk
+            # Let's replace this with a library if we have time. There are many more escaped characters than these two.
+            for original, translated in translations:
+                text = text.replace(original, translated)  # translate junk
             dataDict[idx] = {"timestamp": timestamp, "text": text}
             outfile.writelines(timestamp+ '\n' + text + '\n')
     Subtitles = SubtitleClass(fname, dataDict)

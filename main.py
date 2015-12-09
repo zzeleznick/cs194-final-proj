@@ -1,4 +1,5 @@
 from utils import parseSRT
+from moviepy.editor import VideoFileClip, concatenate
 
 # ---------==== Step 1 ====---------- #
 
@@ -7,7 +8,7 @@ def loadVideo(fname):
     Probably an array of images + audio, right?
     We'll have to investigate.
     """
-    return 0
+    return VideoFileClip(fname+".mp4")
 
 def loadSubs(fname):
     """
@@ -47,35 +48,14 @@ def wordOccurrences(subs, word):
 
     return occurrences
 
-def sections_to_remove(word_occurrences):
-    """
-    WORD_OCCURRENCES is a time-ordered array
-    of tuples.
-        [("00:01:05","00:01:11"), ...]
-
-    Return SECTIONS_TO_REMOVE. Every time-range
-    between the time-ranges in WORD_OCCURRENCES.
-
-    e.g. [("00:00:00","00:01:05"),("00:01:11",...), ...]
-    """
-    sections_to_remove = [("00:00:00","00:01:05")]
-    return sections_to_remove
-
 # ---------==== Step 3 ====---------- #
 
-def slice_video(video,sections_to_remove):
+def slice_video(video,timeRanges):
     """
-    VIDEO is structured as a... 3d array?
-
-    SECTIONS_TO_REMOVE is all time-ranges that
-    we are not keeping and should therefore delete.
-
-    Since VIDEO is large, we delete irrelevant
-    sections of VIDEO, rather than making a copy.
+    We use Zulko's excellent moviepy.
     """
-    for section in sections_to_remove:
-        # delete that particular time-range
-        pass
+    return concatenate([video.subclip(start, end)
+                         for (start,end) in timeRanges])
 
 # ---------==== Step 4 ====---------- #
 
@@ -92,15 +72,14 @@ WORD = "say"
 
 def main():
     # STEP 1: Load files
-    video = loadVideo(NAME + '.mp4')
+    video = loadVideo(NAME+'.mp4')
     subs = loadSubs(NAME)
 
     # STEP 2: Process Subs Into Array
     word_occurrences = wordOccurrences(subs, WORD)
-    sections_to_remove = sections_to_remove(word_occurrences)
 
     # STEP 3: Slice the Video
-    slice_video(video,sections_to_remove)
+    slice_video(video,word_occurrences)
 
     # STEP 4: Save the Video that has been cut.
     save_video = save_video(video_name+"-cut.jpg")
