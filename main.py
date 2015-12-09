@@ -69,6 +69,7 @@ def save_video(fname,video):
                   codec='libx264', audio_codec='aac',
                   temp_audiofile= 'output/temp-audio.m4a',
                   remove_temp=True, audio_bitrate="1000k", bitrate="4000k")
+
 # ---------===== MAIN ====---------- #
 
 NAME = "1"
@@ -78,13 +79,10 @@ def main():
     # STEP 1: Load files
     video = loadVideo(NAME)
     subs = loadSubs(NAME)
-    print subs
     # STEP 2: Process Subs Into Array
     word_occurrences = wordOccurrences(subs, WORD)
-
     # STEP 3: Slice the Video
     video = slice_video(video, word_occurrences)
-
     # STEP 4: Save the Video that has been cut.
     save_video(NAME,video)
 
