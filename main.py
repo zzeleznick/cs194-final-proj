@@ -1,6 +1,7 @@
 from utils import parseSRT, flatten
 from moviepy.editor import VideoFileClip, concatenate
 import re
+import time
 
 # ---------==== Step 1 ====---------- #
 
@@ -34,11 +35,17 @@ def refineBounds(word, subLine, timeRange, padding=0.1):
     print(occurrences)
     # Take proportional chunk out of timeRange
     lineLength = len(subLine)
+    startSeconds = int(timeRange[0][0][3:5])*60 + int(timeRange[0][0][6:8])
+    endSeconds = int(timeRange[1][0][3:5])*60 + int(timeRange[1][0][6:8])
+    secondsOfRange = endSeconds - startSeconds
     for (start,end) in occurrences:
-        startTime = start/lineLength * timeRange[0]
-        endTime = end/lineLength * timeRange[1]
+        # Assumes HH:MM:SS possibly with decimal places.
+        startTime = start/lineLength * secondsOfRange
+        endTime = end/lineLength * secondsOfRange
         timeRanges.append((startTime,endTime))
-    return timeRanges
+
+
+    return secondsOfRange
 
 def wordOccurrences(subs, words, singleWords=False, fakeSpeech=False):
     """
