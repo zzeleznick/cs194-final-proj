@@ -25,15 +25,20 @@ def refineBounds(word, subLine, timeRange, padding=0.1):
     timeRange = ["00:00:56,489"],["00:00:59,592"]
     word = "the"
     """
+    timeRanges = []
     # Find all occurrences of word in subtitle line
     subLine = " "+" ".join(subLine)+" "
     word = " "+word+" "
     # Credit to http://stackoverflow.com/questions/4664850/find-all-occurrences-of-a-substring-in-python
     occurrences = [(m.start(),m.end()) for m in re.finditer(word, subLine)]
-    # Get position of word in the subtitle line.
     print(occurrences)
     # Take proportional chunk out of timeRange
-    return timeRange
+    lineLength = len(subLine)
+    for (start,end) in occurrences:
+        startTime = start/lineLength * timeRange[0]
+        endTime = end/lineLength * timeRange[1]
+        timeRanges.append((startTime,endTime))
+    return timeRanges
 
 def wordOccurrences(subs, words, singleWords=False, fakeSpeech=False):
     """
@@ -58,27 +63,16 @@ def wordOccurrences(subs, words, singleWords=False, fakeSpeech=False):
     occurrences = []
     print words
     for idx, wordList in enumerate(segmentedWordList):
-<<<<<<< HEAD
         for word in words:
             if word.upper() in map(str.upper,wordList):
                 if singleWords:  # User chooses to have only one word per clip
-                    timeRange = refineBounds(word, wordList, times[idx])
+                    timeRanges = refineBounds(word, wordList, times[idx])
                 else:
-                    timeRange = times[idx]
-                occurrences.append(timeRange)
+                    timeRanges = [times[idx]]
+                occurrences += timeRanges
                 # You only add whole line once
                 if not singleWords:
                     break
-=======
-        # idx is index
-        matchList = [ [m for m in wordList if m == word ] for word in words ]
-        # 2D array of matches segmented by word in words
-        match = list(flatten(matchList))
-        if match:
-            # Refine bounds for TIMES
-            print idx, wordList
-            occurrences.append(times[idx])
->>>>>>> origin/master
 
     return occurrences
 
