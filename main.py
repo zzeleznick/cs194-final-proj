@@ -1,7 +1,7 @@
 from utils import parseSRT, flatten
 from moviepy.editor import VideoFileClip, concatenate
 import re
-import time
+import datetime as dt
 
 # ---------==== Step 1 ====---------- #
 
@@ -23,31 +23,33 @@ def loadSubs(fname):
 def refineBounds(word, subLine, timeRange, padding=0.1):
     """
     subLine = "But it is clear that the two of them had gone down the"
-    timeRange = (["00:00:56,489"],["00:00:59,592"])
+    timeRange = ["00:00:56,489","00:00:59,592"]
     word = "the"
     """
     timeRanges = []
-    # Find all occurrences of word in subtitle line
+    # Find all occurrences of word in subtitle line. Add spaces to find exact words.
     subLine = " "+" ".join(subLine)+" "
     word = " "+word+" "
     # Credit to http://stackoverflow.com/questions/4664850/find-all-occurrences-of-a-substring-in-python
     occurrences = [(m.start(),m.end()) for m in re.finditer(word, subLine)]
     print(occurrences)
-    # Take proportional chunk out of timeRange
-    lineLength = len(subLine)
-    startSeconds = float(timeRange[0][0][3:5])*60 + float(timeRange[0][0][6:8])
-    endSeconds = float(timeRange[1][0][3:5])*60 + float(timeRange[1][0][6:8])
-    secondsOfRange = endSeconds - startSeconds
+    # Take the lenth of the string.
+    lineLength = float(len(subLine))
+    # Convert start and end time of subLine to floats of seconds
+    startRange = dt.datetime.strptime(timeRange[0], "%H:%M:%S,%f")
+    endRange = dt.datetime.strptime(timeRange[1], "%H:%M:%S,%f")
+    # Convert to timeDelta
+    startRange = float(startRange.seconds) + float(startRange.microseconds/1000)
+    endRange = dt.timedelta(minutes=endRange.minute, seconds=endRange.second, microseconds=endRange.microsecond)
+    secondsOfRange = (endRange-startRange).total_seconds()
     for (startCharIdx,endCharIdx) in occurrences:
-        # Assumes HH:MM:SS possibly with decimal places.
-        wordStartSeconds = startSeconds+(startCharIdx/lineLength)*secondsOfRange
-        wordEndSeconds = endSeconds+(endCharIdx/lineLength)*secondsOfRange
-
-
-
-        timeRanges.append((wordStartSeconds,wordEndSeconds))
-
-
+        wordStartSecs = (float(startCharIdx)/lineLength)*secondsOfRange
+        wordEndSecs = (float(endCharIdx)/lineLength)*secondsOfRange
+        # Convert each to dateTime object and add the start time
+        wordStartSecs = startRange + dt.datetime.strptime(str(wordStartSecs), "%S.%f")
+        wordEndSecs = startRange + dt.datetime.strptime(str(wordEndSecs), "%S.%f")
+        # Finally add to timeRanges
+        timeRanges.append((wordStartSecs.toString("HH:mm:ss"),wordEndSecs.toString("HH:mm:ss")))
     return timeRanges
 
 def wordOccurrences(subs, words, singleWords=False, fakeSpeech=False):
@@ -149,7 +151,7 @@ def test2():
 
 def test3():
     subLine = "But it is clear that the two of them had gone down the".split(" ")
-    timeRange = ["00:00:56,489"],["00:00:59,592"]
+    timeRange = ["00:00:56,489","00:00:59,592"]
     word = "the"
     print refineBounds(word, subLine, timeRange)
 
