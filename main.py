@@ -1,5 +1,6 @@
 from utils import parseSRT
 from moviepy.editor import VideoFileClip, concatenate
+import re
 
 # ---------==== Step 1 ====---------- #
 
@@ -18,7 +19,23 @@ def loadSubs(fname):
 
 # ---------==== Step 2 ====---------- #
 
-def wordOccurrences(subs, words):
+def refineBounds(word, subLine, timeRange, padding=0.1):
+    """
+    subLine = "But it is clear that the two of them had gone down the"
+    timeRange = ["00:00:56,489"],["00:00:59,592"]
+    word = "the"
+    """
+    # Find all occurrences of word in subtitle line
+    subLine = " "+" ".join(subLine)+" "
+    word = " "+word+" "
+    # Credit to http://stackoverflow.com/questions/4664850/find-all-occurrences-of-a-substring-in-python
+    occurrences = [(m.start(),m.end()) for m in re.finditer(word, subLine)]
+    # Get position of word in the subtitle line.
+    print(occurrences)
+    # Take proportional chunk out of timeRange
+    return timeRange
+
+def wordOccurrences(subs, words, singleWords=False, fakeSpeech=False):
     """
     subs is a dictionary with keys of integers (0, N)
     subs.data[0] --> {"timestamp": timestamp, "text": text}
@@ -28,7 +45,7 @@ def wordOccurrences(subs, words):
     Returns an array of tuples denoting
     the time-ranges when WORD occurs.
 
-    We search for WORD:
+    We search for WORD in WORDS:
     - Not Case-Sensitive.
     - Only exact matches of the word
       - (i.e. "african" should not be found for the word "africa").
@@ -36,20 +53,23 @@ def wordOccurrences(subs, words):
     For example:
         [("00:01:05","00:01:11"),("00:01:28","00:01:37")]
     """
-
-    # occurrences_list = [("00:01:05","00:01:11"),("00:01:28","00:01:37")]
     segmentedWordList = subs.words
     times = subs.times
     occurrences = []
     for idx, wordList in enumerate(segmentedWordList):
-        # idx is index
         for word in words:
-            if word in wordList:
-                # Refine bounds for TIMES
-                occurrences.append(times[idx])
-                break
+            if word.upper() in map(str.upper,wordList):
+                if singleWords:
+                    timeRange = refineBounds(word, wordList, times[idx])
+                else:
+                    timeRange = times[idx]
+                occurrences.append(timeRange)
+                # Only add whole line once
+                if not singleWords:
+                    break
 
     return occurrences
+
 
 # ---------==== Step 3 ====---------- #
 
@@ -68,7 +88,7 @@ def save_video(fname,video):
     """
     Save the video to "out/"+fname
     """
-    video.write_videofile("output/"+fname+'.mp4', fps=video.fps,
+    video.write_videofile("output/"+fname+"-sliced.mp4", fps=video.fps,
                   codec='libx264', audio_codec='aac',
                   temp_audiofile= 'output/temp-audio.m4a',
                   remove_temp=True, audio_bitrate="1000k", bitrate="4000k")
@@ -76,7 +96,7 @@ def save_video(fname,video):
 # ---------===== MAIN ====---------- #
 
 NAME = "1"
-WORDS = ["Africa","folks"]
+WORDS = ["Americans"]
 FUNCTION_CHOSEN = 1
 
 # USER OPTIONS
@@ -111,10 +131,17 @@ def test2():
     print subs
     print timestamps
 
+def test3():
+    subLine = "But it is clear that the two of them had gone down the".split(" ")
+    timeRange = ["00:00:56,489"],["00:00:59,592"]
+    word = "the"
+    print refineBounds(word, subLine, timeRange)
+
 if __name__ == '__main__':
     # test()
     # test2()
-    main()
+    test3()
+    # main()
 
 
 
