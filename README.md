@@ -19,13 +19,13 @@
 | output/     |           | directory for output to be saved  |
 
 
-## Web Utilities
+## Utilities
 
-#### YouTube to Subtitle Download
-http://ccsubs.com
+#### YouTube MP4 and .SRT Downloader
+https://github.com/rg3/youtube-dl/
 
-#### YouTube to MP4 Download
-http://www.clipconverter.cc/
+- e.g. youtube-dl --write-srt --srt-lang en https://www.youtube.com/watch?v=yca-uwxCsWg
+- note: for github we need to rescale > ffmpeg -i video.mp4 -s 720x480 -c:a copy output.mp4
 
 ## Video Sources
 
@@ -33,4 +33,5 @@ http://www.clipconverter.cc/
 | Name        | Title       | Duration  | Link        |
 | ----------- | ----------- | --------- | ----------- |
 | Obama-African-Union | Obama Speaks To African Union   |   48:24        | https://youtu.be/z9g5-46Lww8 |
-| Intro | Which Major? - Intro to Descriptive Statistics  |   00:43        | https://youtu.be/mIzPoh_kqw4 |
+|2 | Which Major? - Intro to Descriptive Statistics  |   00:43        | https://youtu.be/mIzPoh_kqw4 |
+|3 | The President Delivers a Statement on the Shooting in Oregon | 12:44 |https://youtu.be/yca-uwxCsWg|
