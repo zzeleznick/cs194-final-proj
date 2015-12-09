@@ -1,4 +1,4 @@
-from utils import parseSRT
+from utils import parseSRT, flatten
 from moviepy.editor import VideoFileClip, concatenate
 import re
 
@@ -56,7 +56,9 @@ def wordOccurrences(subs, words, singleWords=False, fakeSpeech=False):
     segmentedWordList = subs.words
     times = subs.times
     occurrences = []
+    print words
     for idx, wordList in enumerate(segmentedWordList):
+<<<<<<< HEAD
         for word in words:
             if word.upper() in map(str.upper,wordList):
                 if singleWords:
@@ -67,6 +69,16 @@ def wordOccurrences(subs, words, singleWords=False, fakeSpeech=False):
                 # Only add whole line once
                 if not singleWords:
                     break
+=======
+        # idx is index
+        matchList = [ [m for m in wordList if m == word ] for word in words ]
+        # 2D array of matches segmented by word in words
+        match = list(flatten(matchList))
+        if match:
+            # Refine bounds for TIMES
+            print idx, wordList
+            occurrences.append(times[idx])
+>>>>>>> origin/master
 
     return occurrences
 
@@ -78,7 +90,7 @@ def slice_video(video,timeRanges):
     We use Zulko's excellent moviepy, and a line from
     http://zulko.github.io/blog/2014/06/21/some-more-videogreping-with-python/
     """
-    print timeRanges
+    # print timeRanges
     return concatenate([video.subclip(start, end)
                          for (start,end) in timeRanges])
 
