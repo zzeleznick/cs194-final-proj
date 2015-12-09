@@ -1,5 +1,6 @@
 from utils import parseSRT, flatten
 from moviepy.editor import VideoFileClip, concatenate
+from test import refineBoundsSingleLine as refine
 import re
 import datetime as dt
 
@@ -78,7 +79,8 @@ def wordOccurrences(subs, words, singleWords=False, fakeSpeech=False):
         for word in words:
             if word.upper() in map(str.upper,wordList):
                 if singleWords:  # User chooses to have only one word per clip
-                    timeRanges = refineBounds(word, wordList, times[idx])
+                    # timeRanges = refineBounds(word, wordList, times[idx])
+                    timeRanges = refine(word, wordList, times[idx])
                 else:
                     timeRanges = [times[idx]]
                 occurrences += timeRanges
@@ -113,8 +115,9 @@ def save_video(fname,video):
 
 # ---------===== MAIN ====---------- #
 
-NAME = "1"
-WORDS = ["Americans"]
+NAME = "3"
+# WORDS = ["America", "so"]
+WORDS = ["America"]
 FUNCTION_CHOSEN = 1
 
 # USER OPTIONS
@@ -130,7 +133,8 @@ def main():
     video = loadVideo(NAME)
     subs = loadSubs(NAME)
     # STEP 2: Process Subs Into Array
-    word_occurrences = wordOccurrences(subs, WORDS)
+    word_occurrences = wordOccurrences(subs, WORDS, singleWords=True)
+    print word_occurrences
     # STEP 3: Slice the Video
     video = slice_video(video, word_occurrences)
     # STEP 4: Save the Video that has been cut.
@@ -158,8 +162,8 @@ def test3():
 if __name__ == '__main__':
     # test()
     # test2()
-    test3()
-    # main()
+    # test3()
+    main()
 
 
 
