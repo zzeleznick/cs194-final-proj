@@ -40,7 +40,7 @@ def refineBounds(word, subLine, timeRange, padding=0.1):
     endRange = dt.datetime.strptime(timeRange[1], "%H:%M:%S,%f")
     # Convert to timeDelta
     startRange = float(startRange.seconds) + float(startRange.microseconds/1000)
-    endRange = dt.timedelta(minutes=endRange.minute, seconds=endRange.second, microseconds=endRange.microsecond)
+    endRange = float(startRange.seconds) + float(startRange.microseconds/1000)
     secondsOfRange = (endRange-startRange).total_seconds()
     for (startCharIdx,endCharIdx) in occurrences:
         wordStartSecs = (float(startCharIdx)/lineLength)*secondsOfRange
