@@ -1,6 +1,5 @@
 from utils import parseSRT, flatten
 from moviepy.editor import VideoFileClip, concatenate
-from test import refineBoundsSingleLine as refine
 import re
 import datetime as dt
 
@@ -21,36 +20,34 @@ def loadSubs(fname):
 
 # ---------==== Step 2 ====---------- #
 
-def refineBounds(word, subLine, timeRange, padding=0.1):
-    """
-    subLine = "But it is clear that the two of them had gone down the"
-    timeRange = ["00:00:56,489","00:00:59,592"]
-    word = "the"
-    """
+def refineBounds(word, line, timeTuple, padding = .10):
+    # timeTuple = ("00:00:56,489", "00:00:59,592")
     timeRanges = []
-    # Find all occurrences of word in subtitle line. Add spaces to find exact words.
-    subLine = " "+" ".join(subLine)+" "
-    word = " "+word+" "
+    # Find all occurrences of word in subtitle line
+    subLine = " " + " ".join(line) + " "  # no fuzzy matches by adding spaces
+    word = " " + str(word) + " "
     # Credit to http://stackoverflow.com/questions/4664850/find-all-occurrences-of-a-substring-in-python
     occurrences = [(m.start(),m.end()) for m in re.finditer(word, subLine)]
-    print(occurrences)
-    # Take the lenth of the string.
-    lineLength = float(len(subLine))
-    # Convert start and end time of subLine to floats of seconds
-    startRange = dt.datetime.strptime(timeRange[0], "%H:%M:%S,%f")
-    endRange = dt.datetime.strptime(timeRange[1], "%H:%M:%S,%f")
-    # Convert to timeDelta
-    startRange = float(startRange.seconds) + float(startRange.microseconds/1000)
-    endRange = float(startRange.seconds) + float(startRange.microseconds/1000)
-    secondsOfRange = (endRange-startRange).total_seconds()
-    for (startCharIdx,endCharIdx) in occurrences:
-        wordStartSecs = (float(startCharIdx)/lineLength)*secondsOfRange
-        wordEndSecs = (float(endCharIdx)/lineLength)*secondsOfRange
-        # Convert each to dateTime object and add the start time
-        wordStartSecs = startRange + dt.datetime.strptime(str(wordStartSecs), "%S.%f")
-        wordEndSecs = startRange + dt.datetime.strptime(str(wordEndSecs), "%S.%f")
-        # Finally add to timeRanges
-        timeRanges.append((wordStartSecs.toString("HH:mm:ss"),wordEndSecs.toString("HH:mm:ss")))
+    start, end = timeTuple
+    # print 'start: %s, end: %s' % (start, end)
+    base = datetime.datetime.strptime('00:00:00,000', "%H:%M:%S,%f")
+    epoch = datetime.datetime.fromtimestamp(0)
+    timeadjust = (epoch - base).total_seconds()
+    st, ed = [ datetime.datetime.strptime(var, "%H:%M:%S,%f") for var in [start, end] ]
+    st, ed = [(dt - base).total_seconds() for dt in [st, ed]]
+    duration = ed - st
+    for m_start, m_end in occurrences:
+        offset =  float(m_start)/len(subLine)
+        padding *= (1 + 4.0 / duration**2)
+        if offset < .5:
+            true_start = st + offset * duration  - padding * 2 * ( .5 + offset)
+            true_end = st + float(m_end)/len(subLine) * duration + padding
+        else:
+            true_start = ed - (1 - offset) * duration  - padding * 4 * ( .5 + offset )
+            true_end = ed - (1 - (float(m_end)/len(subLine)) ) * duration + padding
+        ts, te = [ datetime.datetime.fromtimestamp(val - timeadjust) for val in [true_start, true_end] ]
+        ts, te = [ str(dt).split()[1][:-3] for dt in [ts, te]]
+        timeRanges.append([ts, te])
     return timeRanges
 
 def wordOccurrences(subs, words, singleWords=False, fakeSpeech=False):
@@ -80,7 +77,7 @@ def wordOccurrences(subs, words, singleWords=False, fakeSpeech=False):
             if word.upper() in map(str.upper,wordList):
                 if singleWords:  # User chooses to have only one word per clip
                     # timeRanges = refineBounds(word, wordList, times[idx])
-                    timeRanges = refine(word, wordList, times[idx])
+                    timeRanges = refineBounds(word, wordList, times[idx])
                 else:
                     timeRanges = [times[idx]]
                 occurrences += timeRanges
@@ -119,23 +116,26 @@ NAME = "3"
 # WORDS = ["America", "so"]
 WORDS = ["America"]
 # WORDS = ["we"]
-# WORDS = ["the"]
+WORDS = ["the"]
 FUNCTION_CHOSEN = 1
 
 # USER OPTIONS
 #    1) Entire Subtitle Line                      [done]
 #        a) Enhancement: Refine to sentences.     []
-#    2) Specific Word(s)                          []
+#    2) Specific Word(s)                          [done]
 #        a) Enhancement: Refine bounds using
 #           sound alignment.                      []
 #    3) String of individual words (fake speech)  []
 
 def main():
+    # STEP 0: Parse Options Based on User Function Choice
+    singleWords = (FUNCTION_CHOSEN == 2 or FUNCTION_CHOSEN == 3)
+    fakeSpeech = (FUNCTION_CHOSEN == 3)
     # STEP 1: Load files
     video = loadVideo(NAME)
     subs = loadSubs(NAME)
     # STEP 2: Process Subs Into Array
-    word_occurrences = wordOccurrences(subs, WORDS, singleWords=True)
+    word_occurrences = wordOccurrences(subs, WORDS, singleWords=singleWords, fakeSpeech=fakeSpeech)
     print word_occurrences
     # STEP 3: Slice the Video
     video = slice_video(video, word_occurrences)
