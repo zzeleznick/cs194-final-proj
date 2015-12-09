@@ -42,12 +42,12 @@ def refineBoundsSingleLine(word, line, timeTuple, padding = .10):
     for m_start, m_end in occurrences:
         print "Character group: %s-%s, start: %0.2f, end: %0.2f " % (m_start, m_end, st, ed)
         offset =  float(m_start)/len(subLine)
-        padding *= (1 + 3.0 / duration)
+        padding *= (1 + 4.0 / duration**2)
         if offset < .5:
-            true_start = st + offset * duration  - padding * ( 1.25 - offset)
-            true_end = st + float(m_end)/len(subLine) * duration + padding * 2
+            true_start = st + offset * duration  - padding * 2 * ( .5 + offset)
+            true_end = st + float(m_end)/len(subLine) * duration + padding
         else:
-            true_start = ed - (1 - offset) * duration  - padding * 3 * ( .5 + offset )
+            true_start = ed - (1 - offset) * duration  - padding * 4 * ( .5 + offset )
             true_end = ed - (1 - (float(m_end)/len(subLine)) ) * duration + padding
 
         ts, te = [ datetime.datetime.fromtimestamp(val - timeadjust) for val in [true_start, true_end] ]
