@@ -55,6 +55,7 @@ def slice_video(video,timeRanges):
     We use Zulko's excellent moviepy, and a line from
     http://zulko.github.io/blog/2014/06/21/some-more-videogreping-with-python/
     """
+    print timeRanges
     return concatenate([video.subclip(start, end)
                          for (start,end) in timeRanges])
 
@@ -64,26 +65,28 @@ def save_video(fname,video):
     """
     Save the video to "out/"+fname
     """
-    video.to_videofile("out/"+fname+'.mp4')
-
+    video.write_videofile("output/"+fname+'.mp4', fps=video.fps,
+                  codec='libx264', audio_codec='aac',
+                  temp_audiofile= 'output/temp-audio.m4a',
+                  remove_temp=True, audio_bitrate="1000k", bitrate="4000k")
 # ---------===== MAIN ====---------- #
 
 NAME = "1"
-WORD = "africa"
+WORD = "Africa"
 
 def main():
     # STEP 1: Load files
     video = loadVideo(NAME)
     subs = loadSubs(NAME)
-
+    print subs
     # STEP 2: Process Subs Into Array
     word_occurrences = wordOccurrences(subs, WORD)
 
     # STEP 3: Slice the Video
-    video = slice_video(video,word_occurrences)
+    video = slice_video(video, word_occurrences)
 
     # STEP 4: Save the Video that has been cut.
-    save_video = save_video(name,video)
+    save_video(NAME,video)
 
 
 def test():
