@@ -21,7 +21,7 @@ class SampleData:
         return out #, out2
 
 
-def refineBoundsSingleLine(word, line, timeTuple, padding = .5):
+def refineBoundsSingleLine(word, line, timeTuple, padding = .10):
     # timeTuple = ("00:00:56,489", "00:00:59,592")
     timeRanges = []
     # Find all occurrences of word in subtitle line
@@ -31,18 +31,28 @@ def refineBoundsSingleLine(word, line, timeTuple, padding = .5):
     occurrences = [(m.start(),m.end()) for m in re.finditer(word, subLine)]
     start, end = timeTuple
     # print 'start: %s, end: %s' % (start, end)
+    base = datetime.datetime.strptime('00:00:00,000', "%H:%M:%S,%f")
     epoch = datetime.datetime.fromtimestamp(0)
+    timeadjust = (epoch - base).total_seconds()
     st, ed = [ datetime.datetime.strptime(var, "%H:%M:%S,%f") for var in [start, end] ]
-    st, ed = [(dt - epoch).total_seconds() for dt in [st, ed]]
+    st, ed = [(dt - base).total_seconds() for dt in [st, ed]]
     duration = ed - st
     print line
     print timeTuple
     for m_start, m_end in occurrences:
-        print m_start, m_end
-        true_start = st + float(m_start)/len(subLine) * duration  - padding
-        true_end = st + float(m_end)/len(subLine) * duration + padding
-        ts, te = [ datetime.datetime.fromtimestamp(val) for val in [true_start, true_end] ]
-        ts, te = [ str(dt).split()[1][:-3].replace('.', ',') for dt in [ts, te]]
+        print "Character group: %s-%s, start: %0.2f, end: %0.2f " % (m_start, m_end, st, ed)
+        offset =  float(m_start)/len(subLine)
+        padding *= (1 + 3.0 / duration)
+        if offset < .5:
+            true_start = st + offset * duration  - padding * ( 1.25 - offset)
+            true_end = st + float(m_end)/len(subLine) * duration + padding * 2
+        else:
+            true_start = ed - (1 - offset) * duration  - padding * 3 * ( .5 + offset )
+            true_end = ed - (1 - (float(m_end)/len(subLine)) ) * duration + padding
+
+        ts, te = [ datetime.datetime.fromtimestamp(val - timeadjust) for val in [true_start, true_end] ]
+        # ts, te = [ str(dt).split()[1][:-3].replace('.', ',') for dt in [ts, te]]
+        ts, te = [ str(dt).split()[1][:-3] for dt in [ts, te]]
         print ts, te
         timeRanges.append([ts, te])
 
