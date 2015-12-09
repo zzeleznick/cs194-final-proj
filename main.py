@@ -23,7 +23,7 @@ def loadSubs(fname):
 def refineBounds(word, subLine, timeRange, padding=0.1):
     """
     subLine = "But it is clear that the two of them had gone down the"
-    timeRange = ["00:00:56,489"],["00:00:59,592"]
+    timeRange = (["00:00:56,489"],["00:00:59,592"])
     word = "the"
     """
     timeRanges = []
@@ -35,17 +35,20 @@ def refineBounds(word, subLine, timeRange, padding=0.1):
     print(occurrences)
     # Take proportional chunk out of timeRange
     lineLength = len(subLine)
-    startSeconds = int(timeRange[0][0][3:5])*60 + int(timeRange[0][0][6:8])
-    endSeconds = int(timeRange[1][0][3:5])*60 + int(timeRange[1][0][6:8])
+    startSeconds = float(timeRange[0][0][3:5])*60 + float(timeRange[0][0][6:8])
+    endSeconds = float(timeRange[1][0][3:5])*60 + float(timeRange[1][0][6:8])
     secondsOfRange = endSeconds - startSeconds
-    for (start,end) in occurrences:
+    for (startCharIdx,endCharIdx) in occurrences:
         # Assumes HH:MM:SS possibly with decimal places.
-        startTime = start/lineLength * secondsOfRange
-        endTime = end/lineLength * secondsOfRange
-        timeRanges.append((startTime,endTime))
+        wordStartSeconds = startSeconds+(startCharIdx/lineLength)*secondsOfRange
+        wordEndSeconds = endSeconds+(endCharIdx/lineLength)*secondsOfRange
 
 
-    return secondsOfRange
+
+        timeRanges.append((wordStartSeconds,wordEndSeconds))
+
+
+    return timeRanges
 
 def wordOccurrences(subs, words, singleWords=False, fakeSpeech=False):
     """
