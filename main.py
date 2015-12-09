@@ -61,12 +61,12 @@ def wordOccurrences(subs, words, singleWords=False, fakeSpeech=False):
 <<<<<<< HEAD
         for word in words:
             if word.upper() in map(str.upper,wordList):
-                if singleWords:
+                if singleWords:  # User chooses to have only one word per clip
                     timeRange = refineBounds(word, wordList, times[idx])
                 else:
                     timeRange = times[idx]
                 occurrences.append(timeRange)
-                # Only add whole line once
+                # You only add whole line once
                 if not singleWords:
                     break
 =======
