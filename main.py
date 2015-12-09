@@ -18,7 +18,7 @@ def loadSubs(fname):
 
 # ---------==== Step 2 ====---------- #
 
-def wordOccurrences(subs, word):
+def wordOccurrences(subs, words):
     """
     subs is a dictionary with keys of integers (0, N)
     subs.data[0] --> {"timestamp": timestamp, "text": text}
@@ -36,15 +36,18 @@ def wordOccurrences(subs, word):
     For example:
         [("00:01:05","00:01:11"),("00:01:28","00:01:37")]
     """
+
     # occurrences_list = [("00:01:05","00:01:11"),("00:01:28","00:01:37")]
     segmentedWordList = subs.words
     times = subs.times
     occurrences = []
     for idx, wordList in enumerate(segmentedWordList):
         # idx is index
-        if word in wordList:
-            # Refine bounds for TIMES
-            occurrences.append(times[idx])
+        for word in words:
+            if word in wordList:
+                # Refine bounds for TIMES
+                occurrences.append(times[idx])
+                break
 
     return occurrences
 
@@ -73,23 +76,23 @@ def save_video(fname,video):
 # ---------===== MAIN ====---------- #
 
 NAME = "1"
-WORD = "Africa"
+WORDS = ["Africa","folks"]
 FUNCTION_CHOSEN = 1
 
 # USER OPTIONS
 #    1) Entire Subtitle Line                      [done]
-#        Enhancement: Refine to sentences.        []
-#    2) Specific Word                             []
-#        Enhancement: Refine bounds using
-#        sound alignment.                         []
-#    3) String of individual words                []
+#        a) Enhancement: Refine to sentences.     []
+#    2) Specific Word(s)                          []
+#        a) Enhancement: Refine bounds using
+#           sound alignment.                      []
+#    3) String of individual words (fake speech)  []
 
 def main():
     # STEP 1: Load files
     video = loadVideo(NAME)
     subs = loadSubs(NAME)
     # STEP 2: Process Subs Into Array
-    word_occurrences = wordOccurrences(subs, WORD)
+    word_occurrences = wordOccurrences(subs, WORDS)
     # STEP 3: Slice the Video
     video = slice_video(video, word_occurrences)
     # STEP 4: Save the Video that has been cut.
@@ -98,7 +101,7 @@ def main():
 
 def test():
     subs = loadSubs(NAME)
-    timestamps = wordOccurrences(subs, WORD)
+    timestamps = wordOccurrences(subs, WORDS)
     print subs
     print timestamps
 
