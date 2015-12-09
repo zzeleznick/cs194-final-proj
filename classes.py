@@ -11,6 +11,8 @@ class WordTokenizer:
             :returns: a list of strings (words)
             '''
             text = self.text
+            pauses = re.compile(r'[\.,;:!\?]')
+            text = pauses.sub(' ' + '~' * 8, text)
             pattern = re.compile(r'[\[\]\(\)\{\}\.,;:!><\?\"\'_`]')
             if keepPunctuation:
                 scrubbed = text # TODO: do later

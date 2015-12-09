@@ -118,6 +118,8 @@ def save_video(fname,video):
 NAME = "3"
 # WORDS = ["America", "so"]
 WORDS = ["America"]
+# WORDS = ["we"]
+# WORDS = ["the"]
 FUNCTION_CHOSEN = 1
 
 # USER OPTIONS
