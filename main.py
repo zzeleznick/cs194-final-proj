@@ -8,7 +8,7 @@ def loadVideo(fname):
     Probably an array of images + audio, right?
     We'll have to investigate.
     """
-    return VideoFileClip(fname+".mp4")
+    return VideoFileClip("data/"+fname+".mp4")
 
 def loadSubs(fname):
     """
@@ -52,37 +52,39 @@ def wordOccurrences(subs, word):
 
 def slice_video(video,timeRanges):
     """
-    We use Zulko's excellent moviepy.
+    We use Zulko's excellent moviepy, and a line from
+    http://zulko.github.io/blog/2014/06/21/some-more-videogreping-with-python/
     """
     return concatenate([video.subclip(start, end)
                          for (start,end) in timeRanges])
 
 # ---------==== Step 4 ====---------- #
 
-def save_video(fname):
+def save_video(fname,video):
     """
     Save the video to "out/"+fname
     """
-    pass
+    video.to_videofile("out/"+fname+'.mp4')
 
 # ---------===== MAIN ====---------- #
 
-NAME = "Intro"
-WORD = "say"
+NAME = "1"
+WORD = "africa"
 
 def main():
     # STEP 1: Load files
-    video = loadVideo(NAME+'.mp4')
+    video = loadVideo(NAME)
     subs = loadSubs(NAME)
 
     # STEP 2: Process Subs Into Array
     word_occurrences = wordOccurrences(subs, WORD)
 
     # STEP 3: Slice the Video
-    slice_video(video,word_occurrences)
+    video = slice_video(video,word_occurrences)
 
     # STEP 4: Save the Video that has been cut.
-    save_video = save_video(video_name+"-cut.jpg")
+    save_video = save_video(name,video)
+
 
 def test():
     subs = loadSubs(NAME)
@@ -98,4 +100,9 @@ def test2():
 
 if __name__ == '__main__':
     # test()
-    test2()
+    # test2()
+    main()
+
+
+
+

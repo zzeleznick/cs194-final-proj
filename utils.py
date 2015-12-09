@@ -66,6 +66,8 @@ def parseSRT(fname):
         for idx, line in enumerate(parsed):
             timestamp, text = line
             timestamp = timestamp.strip()
+            timestamp = timestamp.split(" ")
+            timestamp.pop(1)
             translations = [ ['&#39;', "'"], # apostrophe
                              ['&gt;', ">"], # greater than sign
                             ]
@@ -73,7 +75,7 @@ def parseSRT(fname):
             for original, translated in translations:
                 text = text.replace(original, translated)  # translate junk
             dataDict[idx] = {"timestamp": timestamp, "text": text}
-            outfile.writelines(timestamp+ '\n' + text + '\n')
+            outfile.writelines(str(timestamp)+ '\n' + text + '\n')
     Subtitles = SubtitleClass(fname, dataDict)
     '''
     print(Subtitles)

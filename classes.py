@@ -24,7 +24,7 @@ class SubtitleClass:
     def __init__(self, name, dataDictionary):
         def buildTimeSegments(dataDict):
             # dataDict is generated in utils.py
-            times = [ entry['timestamp'].replace('\n', ' ') for entry in dataDict.values() ]
+            times = [ entry['timestamp'] for entry in dataDict.values() ]
             return times
 
         def buildTimeSegmentedWordList(dataDict):
