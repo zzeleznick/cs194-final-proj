@@ -74,6 +74,15 @@ def save_video(fname,video):
 
 NAME = "1"
 WORD = "Africa"
+FUNCTION_CHOSEN = 1
+
+# USER OPTIONS
+#    1) Entire Subtitle Line                      [done]
+#        Enhancement: Refine to sentences.        []
+#    2) Specific Word                             []
+#        Enhancement: Refine bounds using
+#        sound alignment.                         []
+#    3) String of individual words                []
 
 def main():
     # STEP 1: Load files
