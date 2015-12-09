@@ -1,6 +1,7 @@
 import re
 import sys
 import time
+from itertools import chain
 # internals
 from classes import SubtitleClass
 from classes import WordTokenizer as wdtk
@@ -24,6 +25,9 @@ def zprint(*stream):
             myLog.writelines(str(arg) + ' ')  # safe cast to string and add trailing space
         myLog.writelines('\n')  # end with newline
 
+def flatten(listOfLists):
+    "Flatten one level of nesting"
+    return chain.from_iterable(listOfLists)
 
 def parseSRT(fname):
     lines = []

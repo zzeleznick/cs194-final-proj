@@ -1,4 +1,4 @@
-from utils import parseSRT
+from utils import parseSRT, flatten
 from moviepy.editor import VideoFileClip, concatenate
 
 # ---------==== Step 1 ====---------- #
@@ -41,13 +41,16 @@ def wordOccurrences(subs, words):
     segmentedWordList = subs.words
     times = subs.times
     occurrences = []
+    print words
     for idx, wordList in enumerate(segmentedWordList):
         # idx is index
-        for word in words:
-            if word in wordList:
-                # Refine bounds for TIMES
-                occurrences.append(times[idx])
-                break
+        matchList = [ [m for m in wordList if m == word ] for word in words ]
+        # 2D array of matches segmented by word in words
+        match = list(flatten(matchList))
+        if match:
+            # Refine bounds for TIMES
+            print idx, wordList
+            occurrences.append(times[idx])
 
     return occurrences
 
@@ -58,7 +61,7 @@ def slice_video(video,timeRanges):
     We use Zulko's excellent moviepy, and a line from
     http://zulko.github.io/blog/2014/06/21/some-more-videogreping-with-python/
     """
-    print timeRanges
+    # print timeRanges
     return concatenate([video.subclip(start, end)
                          for (start,end) in timeRanges])
 
@@ -76,7 +79,7 @@ def save_video(fname,video):
 # ---------===== MAIN ====---------- #
 
 NAME = "1"
-WORDS = ["Africa","folks"]
+WORDS = ["Africa", "folks"]
 FUNCTION_CHOSEN = 1
 
 # USER OPTIONS
