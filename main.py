@@ -128,10 +128,10 @@ def refineBounds(word, line, timeTuple, padding = .10):
     # timeTuple = ("00:00:56,489", "00:00:59,592")
     timeRanges = []
     # Find all occurrences of word in subtitle line
-    subLine = " " + " ".join(line) + " "  # no fuzzy matches by adding spaces
+    subLine = " " + " ".join([w.upper() for w in line]) + " "  # no fuzzy matches by adding spaces
     word = " " + str(word) + " "
     # Credit to http://stackoverflow.com/questions/4664850/find-all-occurrences-of-a-substring-in-python
-    occurrences = [(m.start(),m.end()) for m in re.finditer(word, subLine)]
+    occurrences = [(m.start(),m.end()) for m in re.finditer(word.upper(), subLine)]
     start, end = timeTuple
     base = datetime.datetime.strptime('00:00:00,000', "%H:%M:%S,%f")
     epoch = datetime.datetime.fromtimestamp(0)
