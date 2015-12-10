@@ -131,7 +131,7 @@ def refineBounds(word, line, timeTuple, padding = .10):
     subLine = " " + " ".join([w.upper() for w in line]) + " "  # no fuzzy matches by adding spaces
     word = " " + str(word) + " "
     # Credit to http://stackoverflow.com/questions/4664850/find-all-occurrences-of-a-substring-in-python
-    occurrences = [(m.start(),m.end()) for m in re.finditer(word.upper(), subLine)]
+    occurrences = [(m.start(),m.end()) for m in re.finditer(word.upper(), subLine)][:1]
     start, end = timeTuple
     base = datetime.datetime.strptime('00:00:00,000', "%H:%M:%S,%f")
     epoch = datetime.datetime.fromtimestamp(0)
@@ -185,7 +185,6 @@ def wordOccurrences(subs, words, singleWords=False, fakeSpeech=False):
         for word in words:
             if word.upper() in map(str.upper,wordList):
                 if singleWords:  # User chooses to have tight bounds around each word
-                    print "===----====>>>"
                     timeRanges = refineBounds(word, wordList, times[idx])
                 else:
                     timeRanges = [times[idx]]
