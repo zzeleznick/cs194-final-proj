@@ -41,6 +41,7 @@ import re
 import os
 import datetime
 import argparse
+import sys
 
 # ----------==== Step 0 ====---------- #
 # ==== Parse Command Line Options ==== #
@@ -192,7 +193,9 @@ def wordOccurrences(subs, words, singleWords=False):
                 # You only add whole line once
                 if not singleWords:
                     break
-
+    if len(occurrences) == 0:
+        print "\nThe word(s) "+str(words)+" were not in the video. No supercut could be made.\n"
+        sys.exit()
     return occurrences
 
 

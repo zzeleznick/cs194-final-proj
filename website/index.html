@@ -64,13 +64,44 @@
   <div class="row">
 	 <div class="col-md-offset-3 col-md-6">
     <h1>Overview</h1>
-      <p></p>
-      <h2>The Team</h2>
+      <p>On YouTube you see “Supercuts” where every occurrence of a fictional character from a TV show or movie saying his catchphrase, (say, “wubba-lubba-dub-dub”) is compressed into a single compilation. We were particularly inspired by this one:</p>
+      <iframe width="560" height="315" src="https://www.youtube.com/embed/RDrfE9I8_hs" frameborder="0" allowfullscreen></iframe>
+      <p>Rather than doing this by hand, we propose searching for the time-ranges when those phrases occur.</p>
+      <p>Then our code returns a new video with only those phrases. All other phrases are “cropped out”.</p>
+
+      <h2>Our Team</h2>
         <ul>
           <li>Ollie O'Donnell</li>
           <li>Zach Zeleznick</li>
         </ul>
-    <p></p>
+
+      <h2>The Program</h2>
+        <p><code>main.py</code>, when run, takes an <code>.mp4</code> video and its corresponding <code>.srt</code> file and performs one of the following three functions:</p>
+        <ol>
+          <li><strong>Phrase:</strong> Captures the entire phrase in which the word(s) occur.</li>
+          <li><strong>Word:</strong> Tightens the bounds to include just the word(s).</li>
+          <li><strong>Speech:</strong> Combines 1 occurrence of each given word to create a "fake speech".</li>
+        </ol>
+        <p>It then outputs the resultant "supercut" video to <code>/out/FILENAME.mp4</code></p>
+
+        <h3>Example Source Video</h3>
+          <iframe width="560" height="315" src="https://www.youtube.com/embed/TMDV3VY0tPA" frameborder="0" allowfullscreen></iframe>
+
+        <h3>1. Phrase Slicing</h3>
+          <p>Consider the example of calling <code>python main.py --phrase 1 america</code>.</p>
+          <p> In this case we have chosen the input files to be <code>1.mp4</code> and <code>1.srt</code>. The video happens to be Obama's address about the recent terrorist attacks in San Bernardino.</p>
+          <p>We could have chosen to include phrases that include any of arbitrarily large set of words. For example, <code>python main.py --phrase 1 code is good</code> would return all clips that include at least one of the three words. However we find the result to be more fun when we choose one particular word - in this case, "America".</p>
+          <iframe width="560" height="315" src="https://www.youtube.com/embed/nkpAHgUEs_c" frameborder="0" allowfullscreen></iframe>
+        <h3>2. Word Slicing</h3>
+          <p>Here we call <code>python main.py --word 1 america</code>.</p>
+          <p>To isolate the words we used heuristic methods to ascertain when exactly Obama says the word "America" during the phrase. By doing so we can create a possibly more interesting supercut by eliminating the context and focusing on the way that the words are spoken.</p>
+          <iframe width="560" height="315" src="https://www.youtube.com/embed/KGY8NuZBQto" frameborder="0" allowfullscreen></iframe>
+        <h3>3. Fake Speech</h3>
+          <p>Once we have clips of individual words, we are able to compose sentences that the people in the video never actually said.</p>
+          <p>Much like letters made from magazine clippings, it's not exactly convincing but a novel way to communicate nonetheless.</p>
+          <img src="static/clippings.jpg" style="width:340px;margin:auto">
+          <p>We now call <code> python main.py --speech 1 american ideals are stronger than violence</code>.</p>
+          <iframe width="560" height="315" src="https://www.youtube.com/embed/MN0XL2XID6g" frameborder="0" allowfullscreen></iframe>
 	 </div>
   </div>
 </div>
