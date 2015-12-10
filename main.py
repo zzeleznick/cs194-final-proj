@@ -82,8 +82,6 @@ def parse_cmd_options():
     WORDS  = args.keywords
     options = [args.phrase, args.word, args.speech]
 
-    print args
-
     # Check if input arguments are valid #
     valid = testUserInput(videoName)
     if not valid:
@@ -102,10 +100,10 @@ def parse_cmd_options():
     optionNames = ['phrases', 'words', 'speech']
     MODE_NAME = optionNames[MODE]
 
-    print "Finding the words: %s\nVideo: %s\nOption: %s" % (WORDS, videoName, MODE_NAME)
+    print "Finding the words: %s\nVideo Name: %s\nOption: %s" % (WORDS, videoName, MODE_NAME)
     # End Handling Options #
 
-    return videoName, WORDS, MODE
+    return videoName, WORDS, MODE_NAME
 
 # ----------==== Step 1 ====---------- #
 # -==== Load Video and Subtitles ====- #
@@ -186,7 +184,8 @@ def wordOccurrences(subs, words, singleWords=False, fakeSpeech=False):
     for idx, wordList in enumerate(segmentedWordList):
         for word in words:
             if word.upper() in map(str.upper,wordList):
-                if singleWords:  # User chooses to have only one word per clip
+                if singleWords:  # User chooses to have tight bounds around each word
+                    print "===----====>>>"
                     timeRanges = refineBounds(word, wordList, times[idx])
                 else:
                     timeRanges = [times[idx]]
@@ -230,19 +229,15 @@ def save_video(fname,video):
 # ----------==== Main ====---------- #
 # ----==== Run the Pipeline ====---- #
 
-# USER OPTIONS
-#    1) Entire Subtitle Line                      [done]
-#        a) Enhancement: Refine to sentences.     []
-#    2) Specific Word(s)                          [done]
-#        a) Enhancement: Refine bounds using
-#           sound alignment.                      []
-#    3) String of individual words (fake speech)  []
+#   -p, --phrase   Captures the entire phrase
+#   -w, --word     Refines the bounds to include just the word
+#   -s, --speech   Creates a fake speech from the keywords
 
 def main():
     # STEP 0: Parse Options Based on User Function Choice
-    name, words, FUNCTION_CHOSEN = parse_cmd_options()
-    singleWords = (FUNCTION_CHOSEN == 1)
-    fakeSpeech = (FUNCTION_CHOSEN == 2)
+    name, words, modeName = parse_cmd_options()
+    singleWords = (modeName == "speech" or modeName == "words") # tight bounds around words if True
+    fakeSpeech = (modeName == "speech")
     # STEP 1: Load files
     video = loadVideo(name)
     subs = loadSubs(name)
