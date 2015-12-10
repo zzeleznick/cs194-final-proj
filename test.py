@@ -1,6 +1,18 @@
+##############
+##  HEADER  ##
+##############
+# AUTHOR: Ollie O'Donnel & Zach Zeleznick
+# DATE: December 2015
+# COURSE: CS 194-26
+# PROJECT: Video Supercuts
+# FUNCTION: Testing refine bounds (Unused)
+
 import time
 import datetime
 import re
+
+# internals
+from utils import listVideoFiles, listOutputVideoFiles
 
 class SampleData:
     """Class for testing refineBounds"""

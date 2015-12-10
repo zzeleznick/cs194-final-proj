@@ -1,3 +1,12 @@
+##############
+##  HEADER  ##
+##############
+# AUTHOR: Ollie O'Donnel & Zach Zeleznick
+# DATE: December 2015
+# COURSE: CS 194-26
+# PROJECT: Video Supercuts
+# FUNCTION: Testing Videocutting (Unused)
+
 import re
 import math
 import os
@@ -5,7 +14,8 @@ import argparse
 from subprocess import check_call, PIPE, Popen
 import shlex
 
-from utils import INPUT_FOLDER, OUTPUT_FOLDER, LOG_FILE, zprint
+from utils import INPUT_FOLDER, OUTPUT_FOLDER, LOG_FILE
+from utils import zprint, listVideoFiles, listOutputVideoFiles
 
 def main():
     filename, split_length, offset, limit = parse_options()
@@ -55,21 +65,6 @@ def main():
             format(inputVideoPath, split_start, split_length, path, timing, ext)
         print("About to run: {}".format(cmd))
         check_call(shlex.split(cmd), universal_newlines=True)
-
-def listVideoFiles():
-    fileNames = [f for f in os.listdir(INPUT_FOLDER) if f.upper().endswith('.MP4')]
-    return 'Video Files: ' + ' | '.join(fileNames)
-
-def listOutputVideoFiles():
-    folders = [f for f in os.listdir(OUTPUT_FOLDER) if os.path.isdir(OUTPUT_FOLDER+f)]
-    fileNames = []
-    for folder in folders:
-        names = []
-        for f in os.listdir(OUTPUT_FOLDER+folder):
-            if f.endswith('.mp4'):
-                names.append(f[:f.index('.mp4')])
-        fileNames.append(str(folder) + ': ' + ", ".join(names))
-    return str(fileNames)
 
 def parse_options():
     parser = argparse.ArgumentParser(

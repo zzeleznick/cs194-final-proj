@@ -1,3 +1,12 @@
+##############
+##  HEADER  ##
+##############
+# AUTHOR: Ollie O'Donnel & Zach Zeleznick
+# DATE: December 2015
+# COURSE: CS 194-26
+# PROJECT: Video Supercuts
+# FUNCTION: Support Classes
+
 import re
 
 class WordTokenizer:

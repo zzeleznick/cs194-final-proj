@@ -1,16 +1,21 @@
+##############
+##  HEADER  ##
+##############
+# AUTHOR: Ollie O'Donnel & Zach Zeleznick
+# DATE: December 2015
+# COURSE: CS 194-26
+# PROJECT: Video Supercuts
+# FUNCTION: General Utilties
+
 import re
-import sys
+import os, sys
 import time
 from itertools import chain
 # internals
+from config import INPUT_FOLDER, OUTPUT_FOLDER, LOG_FILE, TIMESTAMP_SET
 from classes import SubtitleClass
 from classes import WordTokenizer as wdtk
 
-INPUT_FOLDER = 'data/'
-OUTPUT_FOLDER = 'output/'
-
-LOG_FILE = 'log.txt'
-TIMESTAMP_SET = False
 
 def zprint(*stream):
     '''
@@ -28,6 +33,26 @@ def zprint(*stream):
 def flatten(listOfLists):
     "Flatten one level of nesting"
     return chain.from_iterable(listOfLists)
+
+
+def listVideoFiles():
+    pureNumbers = re.compile(r'^[0-9]*$')
+    fileNames = [f[:f.index('.mp4')] for f in os.listdir(INPUT_FOLDER) if f.endswith('.mp4')]
+    fileNames = [ f for f in fileNames if pureNumbers.match(f)]
+    return 'Video Files: ' + ' | '.join(fileNames)
+
+
+def listOutputVideoFiles():
+    folders = [f for f in os.listdir(OUTPUT_FOLDER) if os.path.isdir(OUTPUT_FOLDER+f)]
+    fileNames = []
+    for folder in folders:
+        names = []
+        for f in os.listdir(OUTPUT_FOLDER+folder):
+            if f.endswith('.mp4'):
+                names.append(f[:f.index('.mp4')])
+        fileNames.append(str(folder) + ': ' + ", ".join(names))
+    return str(fileNames)
+
 
 def parseSRT(fname):
     lines = []
