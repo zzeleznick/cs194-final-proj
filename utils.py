@@ -30,10 +30,10 @@ def zprint(*stream):
             myLog.writelines(str(arg) + ' ')  # safe cast to string and add trailing space
         myLog.writelines('\n')  # end with newline
 
+
 def flatten(listOfLists):
     "Flatten one level of nesting"
     return chain.from_iterable(listOfLists)
-
 
 def listVideoFiles():
     pureNumbers = re.compile(r'^[0-9]*$')
@@ -52,6 +52,42 @@ def listOutputVideoFiles():
                 names.append(f[:f.index('.mp4')])
         fileNames.append(str(folder) + ': ' + ", ".join(names))
     return str(fileNames)
+
+
+def testConfig(*folders):
+    "Takes unlimited folder args and determines which folders to build"
+    return [folder for folder in folders if not os.path.isdir(folder)]
+
+def ensureConfigBuilt():
+    "Makes required directories for program functionality"
+    todo = testConfig(INPUT_FOLDER, OUTPUT_FOLDER)
+    for folder in todo:
+        print "WARNING Folder: '%s' cannot be found. Creating now." % (folder)
+        os.mkdir(folder)
+
+def testPaths(name):
+    flag = True
+    videoPath = INPUT_FOLDER + name + '.mp4'
+    subsPath = INPUT_FOLDER + name + '.srt'
+    if not os.path.isfile(videoPath):
+        print "ERROR: Video path '%s' cannot be found" % (videoPath)
+        flag = False
+    if not os.path.isfile(subsPath):
+        print "ERROR: Subtitle path '%s' cannot be found"  % (subsPath)
+        flag = False
+    return flag
+
+def testUserInput(videoName):
+    result = True
+    ensureConfigBuilt()
+    # Check if video name is Valid #
+    if not videoName:
+        print("ERROR: Did not input value for video name")
+        result = False
+    else:
+        result = testPaths(videoName)
+
+    return result
 
 
 def parseSRT(fname):

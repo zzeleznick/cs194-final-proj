@@ -35,7 +35,7 @@
 # 4. If the audio has many pauses or applauses, the bounds are less precise
 
 from config import INPUT_FOLDER, OUTPUT_FOLDER, LOG_FILE, TIMESTAMP_SET
-from utils import parseSRT, flatten, listVideoFiles, listOutputVideoFiles
+from utils import parseSRT, flatten, testUserInput, listVideoFiles
 from moviepy.editor import VideoFileClip, concatenate
 import re
 import os
@@ -78,32 +78,18 @@ def parse_cmd_options():
     global WORDS
     global MODE_NAME
 
-    video  = args.filename
+    videoName = args.filename
     WORDS  = args.keywords
     options = [args.phrase, args.word, args.speech]
 
     print args
 
-    # Checking if Video is Valid #
-    if not video:
-        print("ERROR: Did not input value for video name")
-        print listVideoFiles()
+    # Check if input arguments are valid #
+    valid = testUserInput(videoName)
+    if not valid:
+        print 'Try a video file from the list [%s] ' % listVideoFiles()
         exit()
-    else:
-        videoPath = INPUT_FOLDER + video + '.mp4'
-        subsPath = INPUT_FOLDER + video + '.srt'
-
-    if not os.path.isfile(videoPath):
-        print("ERROR: VideoFile '%s' is not on path '%s'" % (video, INPUT_FOLDER) )
-        print listVideoFiles()
-        exit()
-    # End Checking if Video is Valid #
-
-    # Checking if Subtitles are Valid #
-    if not os.path.isfile(subsPath):
-        print("ERROR: SubtitleFile '%s' is not on path '%s'" % (video, INPUT_FOLDER) )
-        exit()
-    # End Checking if Subtile File is Valid #
+    # End input validation #
 
     # Handling Options #
     VERBOSE = args.verbose
@@ -116,10 +102,10 @@ def parse_cmd_options():
     optionNames = ['phrases', 'words', 'speech']
     MODE_NAME = optionNames[MODE]
 
-    print "Finding the words: %s\nVideo: %s\nOption: %s" % (WORDS, videoPath, MODE_NAME)
+    print "Finding the words: %s\nVideo: %s\nOption: %s" % (WORDS, videoName, MODE_NAME)
     # End Handling Options #
 
-    return video, WORDS, MODE
+    return videoName, WORDS, MODE
 
 # ----------==== Step 1 ====---------- #
 # -==== Load Video and Subtitles ====- #
@@ -170,7 +156,7 @@ def refineBounds(word, line, timeTuple, padding = .10):
         ts, te = [ datetime.datetime.fromtimestamp(val - timeadjust) for val in [true_start, true_end] ]
         ts, te = [ str(dt).split()[1][:-3] for dt in [ts, te]]
         if VERBOSE:
-            print 'Extracted Times: %s-%s' % (ts, te)
+            print 'Extracted Times: %s - %s' % (ts, te)
         timeRanges.append([ts, te])
     return timeRanges
 
