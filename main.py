@@ -158,7 +158,7 @@ def refineBounds(word, line, timeTuple, padding = .10):
         timeRanges.append([ts, te])
     return timeRanges
 
-def wordOccurrences(subs, words, singleWords=False, fakeSpeech=False):
+def wordOccurrences(subs, words, singleWords=False):
     """
     subs is a dictionary with keys of integers (0, N)
     subs.data[0] --> {"timestamp": timestamp, "text": text}
@@ -241,7 +241,14 @@ def main():
     video = loadVideo(name)
     subs = loadSubs(name)
     # STEP 2: Process Subs Into Array
-    word_occurrences = wordOccurrences(subs, words, singleWords=singleWords, fakeSpeech=fakeSpeech)
+    if fakeSpeech:
+        word_occurrences = []
+        for word in words:
+            first_occurrence = wordOccurrences(subs, [word], singleWords=singleWords)[0]
+            print first_occurrence
+            word_occurrences.append(first_occurrence)
+    else:
+        word_occurrences = wordOccurrences(subs, words, singleWords=singleWords)
     if VERBOSE:
         print word_occurrences
     # STEP 3: Slice the Video
