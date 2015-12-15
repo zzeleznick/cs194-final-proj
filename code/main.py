@@ -267,6 +267,7 @@ def test3():
     print refineBounds(word, subLine, timeRange)
 
 if __name__ == '__main__':
+    print sys.argv
     main()
 
 

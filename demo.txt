@@ -1,0 +1,5 @@
+python main.py --phrase 3 america
+open output/3-ph
+python main.py --word 3 america
+open output/3-word
+python main.py --speech 1 american ideals are stronger than violence
