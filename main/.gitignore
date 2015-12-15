@@ -1,7 +1,4 @@
 .DS_Store
 .ipynb_checkpoints/
 output/
-main/output/
-output-old/
-main/*.pyc
 *.pyc
