@@ -14,8 +14,10 @@ Due to the large file sizes of the data videos, we recommend that you create a p
 |             |  code/    | directory for code base |
 |             |  website  | directory for website  |
 
-> mkdir supervid && cd supervid
-> git clone -b gh-pages --single-branch https://github.com/zzeleznick/cs194-final-proj.git website
-> git clone -b master --single-branch https://github.com/zzeleznick/cs194-final-proj.git code
+```
+mkdir supervid && cd supervid
+git clone -b gh-pages --single-branch https://github.com/zzeleznick/cs194-final-proj.git website
+git clone -b master --single-branch https://github.com/zzeleznick/cs194-final-proj.git code
+```
 
 ### Thanks!
