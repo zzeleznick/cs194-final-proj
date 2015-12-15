@@ -74,6 +74,7 @@ def parse_cmd_options():
                         help='Creates a fake speech from the keywords')
 
     args = parser.parse_args()
+    print args
 
     global VERBOSE
     global WORDS

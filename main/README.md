@@ -24,6 +24,16 @@
 
 #### Dynamically creates a supercut from a video and subtitle pairing where the keyword(s) of interest are spoken
 
+### Sample Usage:
+```
+>>> python main.py --phrase 3 america
+>>> open output/3-phrases-AMERICA.mp4
+>>> python main.py --word 3 america
+>>> open output/3-words-AMERICA.mp4
+>>> python main.py --speech 1 american ideals are stronger than violence
+>>> output/1-speech-AMERICAN-IDEALS-ARE-STRONGER-THAN-VIOLENCE.mp4
+```
+
 ```
 > usage: main.py [-h] [-v] [-p | -w | -s] [videoName] [keywords]
 
@@ -39,6 +49,7 @@
 #   -s, --speech   Creates a fake speech from the keywords
 ```
 
+
 ## External Utilities
 
 #### YouTube MP4 and .SRT Downloader
@@ -51,6 +62,6 @@ https://github.com/rg3/youtube-dl/
 ## Video Sources
 | Name        | Title       | Duration  | Link        |
 | ----------- | ----------- | --------- | ----------- |
-| Obama-African-Union | Obama Speaks To African Union   |   48:24        | https://youtu.be/z9g5-46Lww8 |
-|2 | Which Major? - Intro to Descriptive Statistics  |   00:43        | https://youtu.be/mIzPoh_kqw4 |
+| 1 | President Obama Delivers An Address To The Nation Dec. 6th 2015  | 13:09 |https://youtu.be/TMDV3VY0tPA|
+|2 | Donald Trump: 'We Are Not Loved By Many Muslims' MSNBC  |   21:34       | https://youtu.be/NMYeVasogH4 |
 |3 | The President Delivers a Statement on the Shooting in Oregon | 12:44 |https://youtu.be/yca-uwxCsWg|

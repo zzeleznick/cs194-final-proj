@@ -90,12 +90,17 @@ def testUserInput(videoName):
     return result
 
 
-def parseSRT(fname):
+def parseSRT(fname, parent = False):
     lines = []
     ext = '.srt'
     if fname.endswith(ext):
         fname = fname[0:fname.index(ext)]
-    with open(INPUT_FOLDER + fname + ext, 'r') as infile:
+    filename = INPUT_FOLDER + fname + ext
+    if parent:
+        filename = parent + INPUT_FOLDER + fname + ext
+    else:
+        filename = INPUT_FOLDER + fname + ext
+    with open(filename, 'r') as infile:
         lines = infile.readlines()[4:-1]
     # NOTE: lines [0:4] always are always junk, and last 2 are blank
     # NOTE: Can contain odd span text
