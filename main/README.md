@@ -1,4 +1,4 @@
-#  CS194-26: Video Scripting (Final Project)
+#  CS194-26: Video Supercuts (Final Project)
 
 ## Main Files
 -  main.py          Generates output video
@@ -22,11 +22,11 @@
 
 ## Project Summary:
 
-### Dynamically creates a supercut from a video and subtitle pairing where the keyword(s) of interest are spoken
-
-> usage: main.py [-h] [-v] [-p | -w | -s] [videoName] [keywords]
+#### Dynamically creates a supercut from a video and subtitle pairing where the keyword(s) of interest are spoken
 
 ```
+> usage: main.py [-h] [-v] [-p | -w | -s] [videoName] [keywords]
+
 # positional arguments:
 #   videoName   The name of the video to process
 #   keywords    The words to find in the video
